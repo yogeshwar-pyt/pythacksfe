@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, MoreVertical, ChevronRight } from "lucide-react";
+import { Phone, Mail, MoreVertical, ChevronRight, FlaskConical } from "lucide-react";
 import { mockBriefingCalls } from "@/lib/mock-calls";
 import { useRouter } from "next/navigation";
 import type { BriefingCall } from "@/lib/types";
@@ -47,6 +47,19 @@ export default function AODashboardPage() {
       <AppHeader pageTitle="AO Dashboard" />
       
       <div className="flex h-screen flex-col bg-slate-50">
+        {/* Header with Playground Link */}
+        <div className="border-b border-slate-200 bg-white px-6 py-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">Tasks Overview</h2>
+            <button
+              onClick={() => router.push("/niner-playground")}
+              className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            >
+              <FlaskConical className="h-4 w-4" />
+              Niner Playground
+            </button>
+          </div>
+        </div>
         {/* Table */}
         <div className="flex-1 overflow-auto p-6">
           <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">

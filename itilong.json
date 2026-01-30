@@ -1,0 +1,409 @@
+/* 1 */
+{
+    "_id" : ObjectId("6856836d5fc95d00015531a7"),
+    "flightAliasId" : "fl1750500205552",
+    "rcSegments" : [],
+    "itineraryBlocks" : [ 
+        {
+            "blockType" : "CITY",
+            "cityBlock" : {
+                "cityId" : NumberLong(41),
+                "dayPlans" : [ 
+                    {
+                        "dayNum" : 1,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 1,
+                                "actionType" : "INTERNATIONAL_ARRIVE",
+                                "arrivalSlotActionDetail" : {
+                                    "arrivalAirportCode" : "DPS",
+                                    "meetingPointTransfer" : {
+                                        "transferType" : "PRIVATE"
+                                    }
+                                },
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "NOON",
+                                "slotSpan" : 2,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "dayNum" : 2,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 1,
+                                "actionType" : "ACTIVITY",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(506393),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "NOON",
+                                "slotSpan" : 1,
+                                "actionType" : "ACTIVITY",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(368388),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "15:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "EVENING",
+                                "slotSpan" : 1,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "dayNum" : 3,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "ACTIVITY",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(519102),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }
+                ],
+                "passId" : 0
+            }
+        }, 
+        {
+            "blockType" : "CITY",
+            "cityBlock" : {
+                "cityId" : NumberLong(71),
+                "dayPlans" : [ 
+                    {
+                        "dayNum" : 4,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 1,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "NOON",
+                                "slotSpan" : 1,
+                                "actionType" : "ACTIVITY_WITH_TRANSFER",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(150697),
+                                    "intercityTransferSlotActionDetail" : {
+                                        "intercityTransferType" : "DIRECT",
+                                        "directTransferDetail" : {
+                                            "transferMode" : "CAR"
+                                        },
+                                        "fromCityId" : NumberLong(41),
+                                        "toCityId" : NumberLong(71)
+                                    },
+                                    "transferIncluded" : true,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "15:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "EVENING",
+                                "slotSpan" : 1,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "dayNum" : 5,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "ACTIVITY",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(510914),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }
+                ],
+                "passId" : 0
+            }
+        }, 
+        {
+            "blockType" : "CITY",
+            "cityBlock" : {
+                "cityId" : NumberLong(79),
+                "dayPlans" : [ 
+                    {
+                        "dayNum" : 6,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "ACTIVITY_WITH_TRANSFER",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(300047),
+                                    "intercityTransferSlotActionDetail" : {
+                                        "intercityTransferType" : "DIRECT",
+                                        "directTransferDetail" : {
+                                            "transferMode" : "CAR"
+                                        },
+                                        "fromCityId" : NumberLong(71),
+                                        "toCityId" : NumberLong(79)
+                                    },
+                                    "transferIncluded" : true,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "dayNum" : 7,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "ACTIVITY",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(488930),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }
+                ],
+                "passId" : 0
+            }
+        }, 
+        {
+            "blockType" : "CITY",
+            "cityBlock" : {
+                "cityId" : NumberLong(295),
+                "dayPlans" : [ 
+                    {
+                        "dayNum" : 8,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "ACTIVITY_WITH_TRANSFER",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(665878),
+                                    "intercityTransferSlotActionDetail" : {
+                                        "intercityTransferType" : "DIRECT",
+                                        "directTransferDetail" : {
+                                            "transferMode" : "CAR"
+                                        },
+                                        "fromCityId" : NumberLong(79),
+                                        "toCityId" : NumberLong(295)
+                                    },
+                                    "transferIncluded" : true,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "dayNum" : 9,
+                        "stay" : false,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "INTERNATIONAL_DEPART",
+                                "departureSlotActionDetail" : {
+                                    "departureAirportCode" : "DPS",
+                                    "meetingPointTransfer" : {
+                                        "transferType" : "PRIVATE"
+                                    }
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "changeHotel" : false
+                    }
+                ],
+                "passId" : 0
+            }
+        }
+    ],
+    "costingKeyObject" : {
+        "costingStatus" : "COMPLETE",
+        "costingConfiguration" : {
+            "departureAirport" : "BLR",
+            "arrivalAirport" : "BLR",
+            "departureDate" : "22/Nov/2025",
+            "departureDateMillis" : NumberLong(1763769600000),
+            "returnDateMillis" : NumberLong(-1),
+            "departureCity" : "BLR",
+            "hotelGuestRoomConfigurations" : [ 
+                {
+                    "adultCount" : 2,
+                    "childAges" : []
+                }
+            ],
+            "tripType" : "COUPLE",
+            "nights" : 0,
+            "nationality" : "IN",
+            "splitToOneWayFlight" : false
+        },
+        "stayStartDateMillis" : NumberLong(1763856000000),
+        "totalDiscountApplied" : 0.0,
+        "totalFlightDiscountApplied" : 0.0,
+        "totalPostBookingDiscountApplied" : 0.0,
+        "totalPostBookingLandDiscountApplied" : 0.0,
+        "totalPostBookingFlightDiscountApplied" : 0.0,
+        "totalRefundAdjustmentLandDiscountApplied" : 0.0,
+        "totalRefundAdjustmentFlightDiscountApplied" : 0.0,
+        "discountToAgent" : 0.0,
+        "totalSavings" : 0.0,
+        "landExposureAmount" : 0.0,
+        "intlFlightExposureAmount" : 0.0
+    },
+    "tripId" : "6856836d5fc95d00015531a5",
+    "userSearchDetail" : {
+        "_id" : ObjectId("6856836d5fc95d00015531a6"),
+        "region" : "idn",
+        "globalRegion" : "SEA",
+        "cities" : [ 
+            NumberLong(41), 
+            NumberLong(71), 
+            NumberLong(79), 
+            NumberLong(295)
+        ],
+        "minDays" : 4,
+        "maxDays" : 6,
+        "themes" : [],
+        "interests" : [ 
+            32, 
+            33, 
+            34, 
+            66, 
+            4, 
+            36, 
+            68, 
+            37, 
+            38, 
+            9, 
+            12, 
+            15, 
+            79, 
+            49, 
+            19, 
+            51, 
+            52, 
+            84, 
+            24, 
+            27, 
+            29, 
+            31
+        ],
+        "preferredMonth" : "NOVEMBER"
+    },
+    "selfBookedIntlFlights" : false,
+    "costed" : true,
+    "staleCost" : false,
+    "creationTimeMillis" : NumberLong(1750500205558),
+    "lastUpdatedTimeMillis" : NumberLong(-1),
+    "preferredCommuteMode" : "UNKNOWN",
+    "score" : 85,
+    "landPackage" : false,
+    "rcItinerary" : false,
+    "lastEditedMillis" : NumberLong(1750500216920),
+    "userId" : "64a04920dd4d5500017d1610",
+    "lastCostedTimeMillis" : NumberLong(1750500216920),
+    "uniqueIdentifier" : "318513620",
+    "frozen" : false,
+    "special" : false,
+    "isTransferred" : false,
+    "splitPricing" : false,
+    "pricingIds" : {},
+    "deleted" : false,
+    "agent" : false,
+    "booked" : false,
+    "cancelled" : false,
+    "notEditableByAnyone" : false,
+    "flightsBookedByUserAlready" : false,
+    "strikedPrice" : 0.0,
+    "CTO" : true,
+    "dmcDiscount" : 0.0,
+    "locale" : "in",
+    "displayCurrency" : "INR",
+    "openDate" : false,
+    "netBankingOnly" : false,
+    "customInstallment" : true,
+    "mergeInstallment" : false,
+    "installmentUpdated" : false,
+    "tcsVersion" : "SLAB_WITHOUT_INTL_FLIGHTS_SLAB10",
+    "blsScore" : 0,
+    "blsScoreUpdated" : false,
+    "yChosePYTUpdated" : false,
+    "_class" : "com.pyt.veho.model.Itinerary",
+    "platoSyncFailed" : null,
+    "platoSyncFailureReason" : null,
+    "salesOwner" : "sudarsan.a@pickyourtrail.com",
+    "trailId" : NumberLong(2780025),
+    "virtualAccountNumber" : "PYTWWMIB2780025",
+    "duplicate" : true
+}

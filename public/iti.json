@@ -1,0 +1,320 @@
+/* 1 */
+{
+    "_id" : ObjectId("685e7edc3922100001d00e7e"),
+    "flightAliasId" : "fl1751023323996",
+    "rcSegments" : [],
+    "itineraryBlocks" : [ 
+        {
+            "blockType" : "CITY",
+            "cityBlock" : {
+                "cityId" : NumberLong(20),
+                "dayPlans" : [ 
+                    {
+                        "bundledDay" : true,
+                        "dayNum" : 1,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 2,
+                                "actionType" : "INTERNATIONAL_ARRIVE",
+                                "bundled" : true,
+                                "addon" : false,
+                                "lineItemOptionId" : "G2-IA1",
+                                "arrivalSlotActionDetail" : {
+                                    "arrivalAirportCode" : "DXB",
+                                    "meetingPointTransfer" : {
+                                        "transferType" : "PRIVATE"
+                                    }
+                                },
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "EVENING",
+                                "slotSpan" : 1,
+                                "actionType" : "ACTIVITY",
+                                "bundled" : true,
+                                "addon" : false,
+                                "lineItemOptionId" : "G3-A1|1",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(520394),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "1570555_41843",
+                                    "startTime" : "19:00",
+                                    "onwardPickupTime" : "19:00",
+                                    "returnPickupTime" : "22:30"
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "nonSlottedPlans" : [],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "bundledDay" : true,
+                        "dayNum" : 2,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "ACTIVITY",
+                                "bundled" : true,
+                                "addon" : false,
+                                "lineItemOptionId" : "G4-A1|1",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(551195),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "DEFAULT",
+                                    "startTime" : "09:00",
+                                    "onwardPickupTime" : "",
+                                    "returnPickupTime" : ""
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "nonSlottedPlans" : [],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "bundledDay" : true,
+                        "dayNum" : 3,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 1,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "NOON",
+                                "slotSpan" : 2,
+                                "actionType" : "ACTIVITY",
+                                "bundled" : true,
+                                "addon" : false,
+                                "lineItemOptionId" : "G6-A1|1",
+                                "activitySlotActionDetail" : {
+                                    "activityId" : NumberLong(520508),
+                                    "transferIncluded" : false,
+                                    "gradeCode" : "210_41843",
+                                    "startTime" : "15:00",
+                                    "onwardPickupTime" : "14:30",
+                                    "returnPickupTime" : "22:00"
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "nonSlottedPlans" : [],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "bundledDay" : true,
+                        "dayNum" : 4,
+                        "stay" : true,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 3,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "nonSlottedPlans" : [],
+                        "changeHotel" : false
+                    }, 
+                    {
+                        "bundledDay" : true,
+                        "dayNum" : 5,
+                        "stay" : false,
+                        "slotPlans" : [ 
+                            {
+                                "slotName" : "MORNING",
+                                "slotSpan" : 1,
+                                "actionType" : "LEISURE",
+                                "happensInPrevCity" : false
+                            }, 
+                            {
+                                "slotName" : "NOON",
+                                "slotSpan" : 2,
+                                "actionType" : "INTERNATIONAL_DEPART",
+                                "bundled" : true,
+                                "addon" : false,
+                                "lineItemOptionId" : "G8-ID1",
+                                "departureSlotActionDetail" : {
+                                    "departureAirportCode" : "DXB",
+                                    "meetingPointTransfer" : {
+                                        "transferType" : "PRIVATE"
+                                    }
+                                },
+                                "happensInPrevCity" : false
+                            }
+                        ],
+                        "nonSlottedPlans" : [],
+                        "changeHotel" : false
+                    }
+                ],
+                "passId" : 0
+            }
+        }
+    ],
+    "costingKeyObject" : {
+        "costingStatus" : "COMPLETE",
+        "costingConfiguration" : {
+            "departureAirport" : "DEL",
+            "arrivalAirport" : "DEL",
+            "departureDate" : "01/Jul/2025",
+            "departureDateMillis" : NumberLong(1751328000000),
+            "returnDateMillis" : NumberLong(-1),
+            "hotelGuestRoomConfigurations" : [ 
+                {
+                    "adultCount" : 2,
+                    "adultCountWithExtraBed" : 0,
+                    "adultDoubleSharing" : false,
+                    "adultTripleSharing" : false,
+                    "adultFullRoom" : false,
+                    "childAges" : [],
+                    "childAgeWithExtraBed" : []
+                }
+            ],
+            "tripType" : "FAMILY",
+            "nights" : 4,
+            "cityHotelStay" : [ 
+                {
+                    "cityId" : NumberLong(20),
+                    "cityName" : "Dubai",
+                    "hotelId" : NumberLong(55949),
+                    "hotelName" : "Howard Johnson by Wyndham Bur Dubai",
+                    "nights" : 4,
+                    "sourceProvider" : "TRIPLAZE",
+                    "offlineHotel" : false,
+                    "roomCode" : "11077",
+                    "bookingSource" : {
+                        "_id" : 1800,
+                        "name" : "Triplaze"
+                    },
+                    "lineItemOptionId" : "G1-H1",
+                    "livePrice" : true,
+                    "addon" : true,
+                    "addedAddon" : true,
+                    "mealTypeEnum" : "BB",
+                    "allowExtraHotels" : true,
+                    "allowedAlternateSourceProviders" : [ 
+                        "TRIPLAZE"
+                    ],
+                    "refundable" : true
+                }
+            ],
+            "nationality" : "IN",
+            "splitToOneWayFlight" : false
+        },
+        "stayStartDateMillis" : NumberLong(1751328000000),
+        "totalDiscountApplied" : 0.0,
+        "totalFlightDiscountApplied" : 0.0,
+        "totalPostBookingDiscountApplied" : 0.0,
+        "totalPostBookingLandDiscountApplied" : 0.0,
+        "totalPostBookingFlightDiscountApplied" : 0.0,
+        "totalRefundAdjustmentLandDiscountApplied" : 0.0,
+        "totalRefundAdjustmentFlightDiscountApplied" : 0.0,
+        "discountToAgent" : 0.0,
+        "totalSavings" : 0.0,
+        "landExposureAmount" : 0.0,
+        "intlFlightExposureAmount" : 0.0
+    },
+    "tripId" : "68584db8480d320001a11b15",
+    "userSearchDetail" : {
+        "region" : "dxb",
+        "globalRegion" : "OTHERS",
+        "minDays" : 4,
+        "maxDays" : 4,
+        "themes" : [],
+        "interests" : []
+    },
+    "selfBookedIntlFlights" : false,
+    "costed" : true,
+    "staleCost" : false,
+    "creationTimeMillis" : NumberLong(1751023324008),
+    "lastUpdatedTimeMillis" : NumberLong(-1),
+    "preferredCommuteMode" : "UNKNOWN",
+    "score" : 0,
+    "landPackage" : false,
+    "rcItinerary" : false,
+    "lastEditedMillis" : NumberLong(1751023348853),
+    "userId" : "68584db7035908000132cf36",
+    "lastCostedTimeMillis" : NumberLong(1751023348853),
+    "uniqueIdentifier" : "318540062",
+    "frozen" : false,
+    "special" : false,
+    "isTransferred" : false,
+    "splitPricing" : false,
+    "resortImages" : [ 
+        "https://d3lf10b5gahyby.cloudfront.net/campaignitinerary/45d61a56-2210-4fb9-91cb-006e41b194d9_discover-the-best-of.jpg", 
+        "https://oceanjar-new.s3.ap-south-1.amazonaws.com/images/web_app/bundle/67372ab986a9900001d65322/98.jpg", 
+        "https://oceanjar-new.s3.ap-south-1.amazonaws.com/images/web_app/bundle/67372ab986a9900001d65322/5aad794417a552b2d454673037e1e01b_1000x1000.jpg"
+    ],
+    "campaignItineraryId" : "673735eb7b75c30001eecb55",
+    "fixedItineraryId" : "67372ab986a9900001d65322",
+    "combinationId" : "Value",
+    "fixedItineraryVersion" : 13,
+    "fixedItineraryPricingVersion" : 21,
+    "pricingIds" : {},
+    "deleted" : false,
+    "name" : "A Taste of Dubai: From Sand to Sky",
+    "agent" : false,
+    "cityHotelStay" : [ 
+        {
+            "cityId" : NumberLong(20),
+            "cityName" : "Dubai",
+            "hotelId" : NumberLong(55949),
+            "hotelName" : "Howard Johnson by Wyndham Bur Dubai",
+            "nights" : 4,
+            "sourceProvider" : "TRIPLAZE",
+            "offlineHotel" : false,
+            "roomCode" : "11077",
+            "bookingSource" : {
+                "_id" : 1800,
+                "name" : "Triplaze"
+            },
+            "lineItemOptionId" : "G1-H1",
+            "livePrice" : true,
+            "addon" : true,
+            "addedAddon" : true,
+            "mealTypeEnum" : "BB",
+            "allowExtraHotels" : true,
+            "allowedAlternateSourceProviders" : [ 
+                "TRIPLAZE"
+            ],
+            "refundable" : true
+        }
+    ],
+    "booked" : false,
+    "cancelled" : false,
+    "notEditableByAnyone" : false,
+    "flightsBookedByUserAlready" : false,
+    "strikedPrice" : 0.0,
+    "version" : "UNITY",
+    "CTO" : true,
+    "dmcDiscount" : 0.0,
+    "locale" : "in",
+    "displayCurrency" : "INR",
+    "openDate" : false,
+    "netBankingOnly" : false,
+    "bankTransferEnabled" : true,
+    "customInstallment" : true,
+    "mergeInstallment" : false,
+    "installmentUpdated" : false,
+    "videos" : [ 
+        "https://d3lf10b5gahyby.cloudfront.net/campaignitinerary/Dubai Tour Packages.mp4"
+    ],
+    "tcsVersion" : "SLAB_WITHOUT_INTL_FLIGHTS_SLAB10",
+    "skipCombo" : true,
+    "blsScore" : 0,
+    "blsScoreUpdated" : false,
+    "yChosePYTUpdated" : false,
+    "_class" : "com.pyt.veho.model.Itinerary",
+    "platoSyncFailed" : null,
+    "platoSyncFailureReason" : null,
+    "salesOwner" : null,
+    "trailId" : NumberLong(2781487),
+    "virtualAccountNumber" : "PYTWWMIB2781487"
+}

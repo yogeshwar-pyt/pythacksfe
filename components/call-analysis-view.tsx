@@ -183,6 +183,179 @@ export function CallAnalysisView({ analysis }: CallAnalysisViewProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Diarized Conversation */}
+      <Card className="border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-850">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-indigo-600" />
+            <CardTitle className="text-sm font-semibold">Conversation Transcript</CardTitle>
+            <Badge variant="secondary" className="text-xs">Diarized</Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[400px] pr-3">
+            <div className="space-y-3">
+              {/* Agent messages */}
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
+                  A
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Agent</span>
+                    <span className="text-xs text-slate-400">00:00:05</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Good morning! This is Sarah from PickYourTrail. Am I speaking with Mr. Sharma?</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  C
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Customer</span>
+                    <span className="text-xs text-slate-400">00:00:12</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Yes, speaking. Hi Sarah.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
+                  A
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Agent</span>
+                    <span className="text-xs text-slate-400">00:00:15</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Thank you for booking your Dubai trip with us! I'm calling to walk you through your complete itinerary. Do you have about 10-15 minutes?</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  C
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Customer</span>
+                    <span className="text-xs text-slate-400">00:00:25</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Yes, of course! I'm actually quite excited about this trip.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
+                  A
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Agent</span>
+                    <span className="text-xs text-slate-400">00:00:32</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Wonderful! Let me start with your hotel details. You'll be staying at the Rove Downtown for 4 nights. Please note that the standard check-in time is 3 PM and check-out is at 12 PM noon. Early check-in is subject to availability.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  C
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Customer</span>
+                    <span className="text-xs text-slate-400">00:00:48</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Got it. Our flight lands at 8 AM, so we might reach the hotel by 10. Can we request early check-in?</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
+                  A
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Agent</span>
+                    <span className="text-xs text-slate-400">00:01:02</span>
+                  </div>
+                  <p className="text-sm text-slate-700">We can definitely put in a request for early check-in, but I must mention that it's not guaranteed and the hotel may charge an additional fee if rooms are available early. I'll add this note to your booking.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  C
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Customer</span>
+                    <span className="text-xs text-slate-400">00:01:18</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Okay, that works. What about the activities we booked?</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
+                  A
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Agent</span>
+                    <span className="text-xs text-slate-400">00:01:24</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Great question! You have the Burj Khalifa At The Top on Day 2 at 6 PM. Very important - you must carry a printed copy of your voucher and a valid photo ID. Children must be accompanied by adults.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  C
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Customer</span>
+                    <span className="text-xs text-slate-400">00:01:42</span>
+                  </div>
+                  <p className="text-sm text-slate-700">Noted. I'll make sure to print everything. What about the desert safari?</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
+                  A
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Agent</span>
+                    <span className="text-xs text-slate-400">00:01:48</span>
+                  </div>
+                  <p className="text-sm text-slate-700">The desert safari is scheduled for Day 3. Pick-up will be between 3-4 PM from your hotel. One important point - if anyone in your group is pregnant, has back problems, or heart conditions, they should not participate in the dune bashing activity.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  C
+                </div>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-900">Customer</span>
+                    <span className="text-xs text-slate-400">00:02:08</span>
+                  </div>
+                  <p className="text-sm text-slate-700">We're all good on that front. This is very helpful, thank you!</p>
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+        </CardContent>
+      </Card>
     </div>
   );
 }
