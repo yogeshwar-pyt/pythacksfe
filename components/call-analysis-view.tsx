@@ -22,7 +22,7 @@ export function CallAnalysisView({ analysis }: CallAnalysisViewProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/call-coaching">
+          <Link href="/ao-dashboard">
             <button className="flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800">
               <ArrowLeft className="h-4 w-4" />
             </button>

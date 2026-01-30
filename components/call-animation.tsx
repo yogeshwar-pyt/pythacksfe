@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Phone, PhoneOff } from "lucide-react";
+import { FakeWaveform } from "./fake-waveform";
 
 interface CallAnimationProps {
   onComplete: () => void;
@@ -137,13 +138,19 @@ export function CallAnimation({ onComplete }: CallAnimationProps) {
             </div>
           </div>
 
-          {/* Progress bar */}
-          {status !== "ending" && (
+          {/* Fake Waveform - Animated audio visualization */}
+          {status === "active" && (
+            <div className="mt-6">
+              <FakeWaveform isActive={status === "active"} />
+            </div>
+          )}
+          
+          {/* Progress bar for connecting phase */}
+          {status === "connecting" && (
             <div className="mt-6">
               <div className="h-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                 <div 
-                  className="h-full bg-green-500 transition-all duration-1000"
-                  style={{ width: `${(callDuration / 4) * 100}%` }}
+                  className="h-full bg-green-500 animate-pulse"
                 />
               </div>
             </div>

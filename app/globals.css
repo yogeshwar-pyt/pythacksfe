@@ -57,3 +57,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* React Quill editor styles */
+.quill {
+  @apply flex flex-col h-full bg-white;
+}
+
+.quill .ql-toolbar {
+  @apply border-slate-200 bg-slate-50 rounded-t-md;
+}
+
+.quill .ql-container {
+  @apply border-slate-200 flex-1 rounded-b-md overflow-auto;
+  font-family: inherit;
+}
+
+.quill .ql-editor {
+  @apply text-sm leading-relaxed;
+  min-height: 300px;
+}
+
+.quill .ql-editor.ql-blank::before {
+  @apply text-slate-400 italic;
+}
