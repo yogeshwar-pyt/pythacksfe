@@ -17,59 +17,48 @@ interface ChecklistItem {
   id: string;
   text: string;
   completed: boolean;
+  section: string;
 }
 
+// Organized checklist with sections
 const preCallChecklist: ChecklistItem[] = [
-  {
-    id: "1",
-    text: "Confirm travel dates: April 21st departure, April 30th return - 9 nights 10 days",
-    completed: false,
-  },
-  {
-    id: "2",
-    text: "Verify traveler details: 2 adults and 1 child (4 years old daughter)",
-    completed: false,
-  },
-  {
-    id: "3",
-    text: "Documents to carry: Passports, flight tickets, hotel vouchers, visa printouts, travel insurance",
-    completed: false,
-  },
-  {
-    id: "4",
-    text: "Abu Dhabi Yas Island: Ferrari World, Warner Bros, Sea World passes included - inform about park timings",
-    completed: false,
-  },
-  {
-    id: "5",
-    text: "Palm Atlantis stay on April 25th (Anniversary): Confirm booking, mention complimentary water park access",
-    completed: false,
-  },
-  {
-    id: "6",
-    text: "Dubai activities: Burj Khalifa timing, Miracle Garden, Global Village, Dubai City Tour schedule",
-    completed: false,
-  },
-  {
-    id: "7",
-    text: "BAPS Mandir: Register online 1 day prior at mandir.ae/visit, carry passport, closed on Mondays",
-    completed: false,
-  },
-  {
-    id: "8",
-    text: "Grand Mosque Abu Dhabi: Dress code requirements, visiting hours, photography rules",
-    completed: false,
-  },
-  {
-    id: "9",
-    text: "Flight details: Etihad/Emirates confirmed, baggage allowance 30kg checked + 7kg cabin per person",
-    completed: false,
-  },
-  {
-    id: "10",
-    text: "Kid-friendly activities: Dolphin show, Penguin encounter, Atlantis Aquaventure for the daughter",
-    completed: false,
-  },
+  // General Call Tips
+  { id: "1", text: "Greet customer warmly and introduce yourself", completed: false, section: "General Call Tips" },
+  { id: "2", text: "Confirm you're speaking with the right person", completed: false, section: "General Call Tips" },
+  { id: "3", text: "Ask if it's a good time to talk (10-15 mins)", completed: false, section: "General Call Tips" },
+  { id: "4", text: "Mention the purpose: pre-trip briefing call", completed: false, section: "General Call Tips" },
+  
+  // Trip Overview
+  { id: "5", text: "Confirm travel dates and duration", completed: false, section: "Trip Overview" },
+  { id: "6", text: "Verify number of travelers and ages", completed: false, section: "Trip Overview" },
+  { id: "7", text: "Confirm destinations and route", completed: false, section: "Trip Overview" },
+  { id: "8", text: "Mention overall trip flow day-by-day", completed: false, section: "Trip Overview" },
+  
+  // Documentation & Essentials
+  { id: "9", text: "Documents to carry: passport, tickets, vouchers, visa", completed: false, section: "Documentation" },
+  { id: "10", text: "Travel insurance details if applicable", completed: false, section: "Documentation" },
+  { id: "11", text: "Vouchers are live on Pickyourtrail app", completed: false, section: "Documentation" },
+  
+  // Flights & Transfers
+  { id: "12", text: "Flight details and baggage allowance", completed: false, section: "Flights & Transfers" },
+  { id: "13", text: "Airport pickup: driver with name placard", completed: false, section: "Flights & Transfers" },
+  { id: "14", text: "Transfer type: shared vs private", completed: false, section: "Flights & Transfers" },
+  
+  // Accommodation
+  { id: "15", text: "Hotel names and locations", completed: false, section: "Accommodation" },
+  { id: "16", text: "Check-in 2 PM, Check-out 12 PM", completed: false, section: "Accommodation" },
+  { id: "17", text: "Meal plan included (breakfast/half-board)", completed: false, section: "Accommodation" },
+  
+  // Activities & Experiences
+  { id: "18", text: "Key activities and timings", completed: false, section: "Activities" },
+  { id: "19", text: "Activity-specific requirements (dress code, fitness)", completed: false, section: "Activities" },
+  { id: "20", text: "Free time and leisure options", completed: false, section: "Activities" },
+  
+  // Support & Closing
+  { id: "21", text: "24/7 app support starts 3 days before trip", completed: false, section: "Support & Closing" },
+  { id: "22", text: "Contact hours: 10 AM - 7 PM", completed: false, section: "Support & Closing" },
+  { id: "23", text: "Ask if customer has any questions", completed: false, section: "Support & Closing" },
+  { id: "24", text: "Wish them a great trip and close warmly", completed: false, section: "Support & Closing" },
 ];
 
 const voucherDetails = {
@@ -184,38 +173,57 @@ function VrtCallContent() {
           {/* Tab Content */}
           {leftPanelTab === "checkpoints" ? (
             <ScrollArea className="flex-1">
-              <div className="space-y-2 p-4">
-                {checklist.map((item, index) => (
-                  <Card
-                    key={item.id}
-                    className={`border p-3 transition-colors ${
-                      item.completed
-                        ? "border-slate-300 bg-slate-100"
-                        : "border-slate-200 bg-white"
-                    }`}
-                  >
-                    <div className="flex items-start gap-2.5">
-                      {item.completed ? (
-                        <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-slate-600">
-                          <CheckCircle2 className="h-3 w-3 text-white" />
-                        </div>
-                      ) : (
-                        <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-500">
-                          <span className="text-[9px] font-medium">{index + 1}</span>
-                        </div>
-                      )}
-                      <span
-                        className={`text-[13px] leading-relaxed ${
-                          item.completed
-                            ? "text-slate-600"
-                            : "text-slate-700"
-                        }`}
-                      >
-                        {item.text}
-                      </span>
+              <div className="p-4 space-y-4">
+                {/* Group checklist by section */}
+                {Array.from(new Set(checklist.map(item => item.section))).map((section, idx) => {
+                  const sectionItems = checklist.filter(item => item.section === section);
+                  const sectionCompleted = sectionItems.filter(item => item.completed).length;
+                  const isComplete = sectionCompleted === sectionItems.length;
+
+                  return (
+                    <div key={section} className="relative pb-2">
+                       {/* Sticky Header */}
+                      <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-3 border-b border-slate-100 mb-3 flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                            <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
+                              isComplete ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"
+                            }`}>
+                              {idx + 1}
+                            </span>
+                            <h3 className={`text-xs font-bold uppercase tracking-wide ${isComplete ? "text-emerald-700" : "text-slate-800"}`}>
+                                {section}
+                            </h3>
+                         </div>
+                         <Badge variant={isComplete ? "default" : "secondary"} className={`text-[10px] h-5 ${isComplete ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200" : "bg-slate-100 text-slate-500"}`}>
+                            {sectionCompleted}/{sectionItems.length}
+                         </Badge>
+                      </div>
+
+                      {/* Items with visual guide line */}
+                      <div className="space-y-2 pl-2 mb-6 border-l-2 border-slate-100 ml-3">
+                        {sectionItems.map((item) => (
+                          <div
+                            key={item.id}
+                            className={`flex items-start gap-3 rounded-lg border p-3 ml-3 transition-all duration-200 ${
+                              item.completed
+                                ? "border-emerald-100 bg-emerald-50/30"
+                                : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                            }`}
+                          >
+                            {item.completed ? (
+                              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-600 mt-0.5" />
+                            ) : (
+                              <Circle className="h-4 w-4 flex-shrink-0 text-slate-300 mt-0.5" />
+                            )}
+                            <span className={`text-xs leading-relaxed font-medium ${item.completed ? "text-slate-500 line-through decoration-slate-300" : "text-slate-700"}`}>
+                              {item.text}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </Card>
-                ))}
+                  );
+                })}
               </div>
             </ScrollArea>
           ) : (

@@ -56,47 +56,43 @@ export async function POST(request: NextRequest) {
       .map((item) => `ID: ${item.id} | ${item.text}`)
       .join("\n");
 
-    const systemPrompt = `You are a helpful compliance checker for sales call transcripts. Your task is to verify which checklist items have been communicated to the customer.
+    const systemPrompt = `You are a lenient call quality checker. Your task is to verify if topics from a checklist were discussed during the call.
 
-GUIDELINES:
+SIMPLE RULE: If the TOPIC was mentioned or discussed, mark it COMPLETE. You don't need exact words or numbers.
 
-1. **Understand Intent**: Mark an item complete if the core message/meaning was conveyed, even if not word-for-word exact.
-   - Example: Checklist says "Hotel check-in is at 3 PM" → Transcript says "you can check in after 3" → MARK COMPLETE
-   - Example: Checklist says "Carry passport" → Transcript says "bring your passport" or "don't forget passport" → MARK COMPLETE
+EXAMPLES:
 
-2. **Be Reasonable with Numbers**: If a number is mentioned approximately or contextually correct, that's fine.
-   - Example: Checklist says "Tourism fee 15 AED" → Transcript says "small tourism fee at hotel" → MARK COMPLETE (fee was mentioned)
-   - Example: Checklist says "30 kg baggage" → Transcript says "standard baggage allowance" → MARK COMPLETE
+✅ MARK COMPLETE:
+- Checklist: "Greet customer warmly" → Any greeting like "Hi", "Hello", "Good morning" = COMPLETE
+- Checklist: "Confirm travel dates" → Any mention of dates, trip timing, when they're going = COMPLETE  
+- Checklist: "Documents to carry" → Any mention of passport, tickets, vouchers, documents = COMPLETE
+- Checklist: "Hotel check-in 2 PM" → Any mention of check-in time or hotel arrival = COMPLETE
+- Checklist: "Flight details and baggage" → Any mention of flight, airline, or luggage = COMPLETE
+- Checklist: "Ask if customer has questions" → Any "do you have questions?" or "anything else?" = COMPLETE
 
-3. **Topic Coverage Counts**: If the agent discussed the topic/subject matter of the checklist item, mark it complete.
-   - Example: Checklist says "Desert safari pickup 3-4 PM" → Transcript says "safari pickup in afternoon" → MARK COMPLETE
+❌ DON'T MARK:
+- If the topic was never mentioned at all in the conversation
 
-4. **When in Doubt, Mark Complete**: If it seems like the information was conveyed in spirit, give credit.
+BE GENEROUS. If the agent touched on the subject at all, mark it complete.
 
 Respond in JSON format only:
 {
   "completedItems": ["id1", "id2"],
   "reasoning": {
-    "id1": "Brief explanation of how this was covered",
-    "id2": "Brief explanation of how this was covered"
+    "id1": "Topic was discussed when...",
+    "id2": "Mentioned during..."
   }
-}
-
-If no items were covered, respond with:
-{
-  "completedItems": [],
-  "reasoning": {}
 }`;
 
-    const userPrompt = `Here is the transcript of the call so far:
+    const userPrompt = `Transcript:
 ---
 ${transcriptHistory}
 ---
 
-Here are the checklist items to verify (only check uncompleted ones):
+Checklist items to check:
 ${checklistForPrompt}
 
-Determine which items have been FULLY and ACCURATELY conveyed. Remember: if a checklist item contains any specific numbers, prices, percentages, or quantities, those EXACT values must be present in the transcript.`;
+Which topics were discussed? Be generous - if the subject was touched on, mark it complete.`;
 
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
