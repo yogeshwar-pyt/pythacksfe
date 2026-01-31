@@ -54,6 +54,12 @@ const preCallChecklist: ChecklistItem[] = [
   { id: "19", text: "Activity-specific requirements (dress code, fitness)", completed: false, section: "Activities" },
   { id: "20", text: "Free time and leisure options", completed: false, section: "Activities" },
   
+  // Niner Quality Assurance
+  { id: "25", text: "Check passport validity (6 months) & Visa status check", completed: false, section: "Niner Quality Assurance" },
+  { id: "26", text: "Confirm bed configuration (Twin/Double) for couples", completed: false, section: "Niner Quality Assurance" },
+  { id: "27", text: "Verify hotel amenities (Wifi, AC, Elevator)", completed: false, section: "Niner Quality Assurance" },
+  { id: "28", text: "Confirm intercity travel times are comfortable", completed: false, section: "Niner Quality Assurance" },
+
   // Support & Closing
   { id: "21", text: "24/7 app support starts 3 days before trip", completed: false, section: "Support & Closing" },
   { id: "22", text: "Contact hours: 10 AM - 7 PM", completed: false, section: "Support & Closing" },
@@ -206,16 +212,20 @@ function VrtCallContent() {
                             key={item.id}
                             className={`flex items-start gap-3 rounded-lg border p-3 ml-3 transition-all duration-200 ${
                               item.completed
-                                ? "border-emerald-100 bg-emerald-50/30"
+                                ? "border-emerald-200 bg-emerald-50"
                                 : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
                             }`}
                           >
                             {item.completed ? (
-                              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-600 mt-0.5" />
+                              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-700 mt-0.5" />
                             ) : (
                               <Circle className="h-4 w-4 flex-shrink-0 text-slate-300 mt-0.5" />
                             )}
-                            <span className={`text-xs leading-relaxed font-medium ${item.completed ? "text-slate-500 line-through decoration-slate-300" : "text-slate-700"}`}>
+                            <span className={`text-xs leading-relaxed font-semibold transition-colors ${
+                              item.completed 
+                                ? "text-emerald-900 line-through decoration-emerald-600/70 decoration-2" 
+                                : "text-slate-700"
+                            }`}>
                               {item.text}
                             </span>
                           </div>
