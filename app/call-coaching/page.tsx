@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { CoachingView } from "@/components/coaching-view";
 import { CallAnimation } from "@/components/call-animation";
 import { generateCallGuidance, type CallCoachingGuidance } from "@/lib/ai-utils";
@@ -9,7 +9,7 @@ import { mockBriefingCalls } from "@/lib/mock-calls";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function CallCoachingPage() {
+function CallCoachingContent() {
   const [guidance, setGuidance] = useState<CallCoachingGuidance | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCallActive, setIsCallActive] = useState(false);
@@ -102,5 +102,20 @@ export default function CallCoachingPage() {
       
       {isCallActive && <CallAnimation onComplete={handleCallComplete} />}
     </div>
+  );
+}
+
+export default function CallCoachingPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+        <div className="text-center">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+          <p className="mt-4 text-lg font-medium">Loading...</p>
+        </div>
+      </div>
+    }>
+      <CallCoachingContent />
+    </Suspense>
   );
 }

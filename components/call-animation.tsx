@@ -13,15 +13,15 @@ interface SpeechSpeedData {
 
 interface CallAnimationProps {
   onComplete: () => void;
-  callId: string;
-  checklistItems: ChecklistItem[];
+  callId?: string;
+  checklistItems?: ChecklistItem[];
   onChecklistUpdate?: (items: ChecklistItem[]) => void;
 }
 
 export function CallAnimation({
   onComplete,
-  callId,
-  checklistItems,
+  callId = "",
+  checklistItems = [],
   onChecklistUpdate,
 }: CallAnimationProps) {
   const [callDuration, setCallDuration] = useState(0);

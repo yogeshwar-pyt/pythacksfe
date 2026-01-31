@@ -115,6 +115,7 @@ export const mockCallAnalysis: CallAnalysis = {
   compliance_score: {
     total_mandatory_items: 25,
     items_conveyed: 20,
+    items_missed: 5,
     percentage: 80.0,
     rating: "Mostly Compliant"
   },

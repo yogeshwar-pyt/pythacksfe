@@ -34,6 +34,7 @@ export interface CallInsights {
 export interface ComplianceScore {
   total_mandatory_items: number;
   items_conveyed: number;
+  items_missed: number;
   percentage: number;
   rating: string;
 }
