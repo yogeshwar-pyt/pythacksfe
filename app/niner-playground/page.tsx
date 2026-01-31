@@ -1,689 +1,477 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AppHeader } from "@/components/app-header";
-import { Loader2, Sparkles, Upload, FileJson, Plane, Hotel, MapPin, Calendar, Clock, Utensils, Image as ImageIcon, Settings, Plus, Trash2, X } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Sparkles,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  MapPin,
+  Calendar,
+  Users,
+  Plane,
+  Clock,
+  Sun,
+  Sunset,
+  Coffee,
+  Car,
+  Image as ImageIcon
+} from "lucide-react";
+
+// Standard template items from email template
+const TEMPLATE_ITEMS = [
+  { id: "1", text: "Vouchers are live and ready on the Pickyourtrail app" },
+  { id: "2", text: "Documents to carry: Original passports with printed copies, flight tickets, hotel vouchers, colored visa printouts, travel insurance if opted" },
+  { id: "3", text: "Baggage allowance: Check airline specific limits for checked and cabin baggage" },
+  { id: "4", text: "Hotel check-in time is 2:00 PM and check-out time is 12:00 PM. Early check-in and late checkout usually not available" },
+  { id: "5", text: "Activity timings will be shared 1 day in advance. Driver numbers shared 1 hour before pickup time" },
+  { id: "6", text: "All transfers are on shared basis unless upgraded to private at extra cost" },
+  { id: "7", text: "Airport arrival: Driver will be in arrivals hall with placard showing your name" },
+  { id: "8", text: "Transfer waiting time: 5 minutes for shared transfers, 10 minutes for private transfers" },
+  { id: "9", text: "24/7 live chat support on app starts 3 days before your trip" },
+  { id: "10", text: "Contact hours: Available 10 AM to 7 PM for any assistance" },
+];
+
+// City ID to name mapping
+const CITY_NAMES: Record<number, string> = {
+  20: "Dubai",
+  41: "Bali",
+  71: "Ubud",
+  79: "Seminyak",
+  295: "Kuta",
+};
+
+// Activity ID to name mapping
+const ACTIVITY_NAMES: Record<number, string> = {
+  506393: "Ubud Rice Terraces Tour",
+  368388: "Tirta Empul Temple Visit",
+  519102: "Mount Batur Sunrise Trek",
+  150697: "Ubud Art & Culture Tour",
+  510914: "Tegallalang Rice Terrace",
+  300047: "Tanah Lot Temple Sunset",
+  488930: "Seminyak Beach Club",
+  665878: "Uluwatu Temple & Kecak Dance",
+  520394: "Dhow Cruise with Dinner",
+  551195: "Dubai City Tour",
+  520508: "Desert Safari with BBQ Dinner",
+};
+
+// Gallery images for Bali
+const GALLERY_IMAGES = [
+  "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=400&h=300&fit=crop",
+];
+
+interface SlotPlan {
+  slotName: string;
+  actionType: string;
+  activitySlotActionDetail?: { 
+    activityId: number; 
+    startTime: string;
+    intercityTransferSlotActionDetail?: {
+      fromCityId: number;
+      toCityId: number;
+    };
+  };
+  arrivalSlotActionDetail?: { arrivalAirportCode: string };
+  departureSlotActionDetail?: { departureAirportCode: string };
+}
+
+interface DayPlan {
+  dayNum: number;
+  stay: boolean;
+  slotPlans: SlotPlan[];
+}
+
+interface CityBlock {
+  cityId: number;
+  dayPlans: DayPlan[];
+}
+
+interface ItineraryBlock {
+  blockType: string;
+  cityBlock?: CityBlock;
+}
 
 interface ItineraryData {
   name?: string;
+  tripId: string;
   resortImages?: string[];
-  cityHotelStay?: Array<{
-    cityName: string;
-    hotelName: string;
-    nights: number;
-    mealTypeEnum?: string;
-  }>;
-  itineraryBlocks?: Array<{
-    blockType: string;
-    cityBlock?: {
-      cityId: number;
-      dayPlans?: Array<{
-        dayNum: number;
-        stay: boolean;
-        slotPlans?: Array<{
-          slotName: string;
-          actionType: string;
-          arrivalSlotActionDetail?: {
-            arrivalAirportCode?: string;
-            meetingPointTransfer?: {
-              transferType?: string;
-            };
-          };
-          activitySlotActionDetail?: {
-            activityId?: number;
-            startTime?: string;
-            onwardPickupTime?: string;
-            returnPickupTime?: string;
-            transferIncluded?: boolean;
-          };
-        }>;
-      }>;
+  costingKeyObject: {
+    costingConfiguration: {
+      departureAirport: string;
+      departureDate: string;
+      nights: number;
+      tripType: string;
+      hotelGuestRoomConfigurations: Array<{ adultCount: number; childAges: number[] }>;
     };
-  }>;
-  userSearchDetail?: {
-    region?: string;
-    minDays?: number;
-    maxDays?: number;
   };
+  userSearchDetail?: {
+    region: string;
+    minDays: number;
+    maxDays: number;
+  };
+  itineraryBlocks: ItineraryBlock[];
+}
+
+function parseItineraryJson(text: string): ItineraryData | null {
+  try {
+    let cleaned = text
+      .replace(/ObjectId\("([^"]+)"\)/g, '"$1"')
+      .replace(/NumberLong\(([^)]+)\)/g, '$1')
+      .replace(/\/\*[\s\S]*?\*\//g, '');
+    return JSON.parse(cleaned);
+  } catch (e) { 
+    console.error("Parse error:", e);
+    return null; 
+  }
+}
+
+function getSlotIcon(slotName: string) {
+  switch (slotName) {
+    case "MORNING": return <Sun className="h-3 w-3" />;
+    case "NOON": return <Coffee className="h-3 w-3" />;
+    case "EVENING": return <Sunset className="h-3 w-3" />;
+    default: return <Clock className="h-3 w-3" />;
+  }
+}
+
+function getActionLabel(actionType: string, detail?: { activityId?: number; intercityTransferSlotActionDetail?: { fromCityId: number; toCityId: number } }) {
+  switch (actionType) {
+    case "INTERNATIONAL_ARRIVE": return "✈️ Arrival";
+    case "INTERNATIONAL_DEPART": return "✈️ Departure";
+    case "ACTIVITY": return ACTIVITY_NAMES[detail?.activityId || 0] || "Activity";
+    case "ACTIVITY_WITH_TRANSFER": 
+      const transfer = detail?.intercityTransferSlotActionDetail;
+      const activityName = ACTIVITY_NAMES[detail?.activityId || 0] || "Activity";
+      if (transfer) {
+        return `🚗 ${CITY_NAMES[transfer.fromCityId] || ""} → ${CITY_NAMES[transfer.toCityId] || ""} + ${activityName}`;
+      }
+      return activityName;
+    case "LEISURE": return "Leisure Time";
+    default: return actionType;
+  }
+}
+
+function getTotalDays(blocks: ItineraryBlock[]): number {
+  let maxDay = 0;
+  blocks.forEach(block => {
+    block.cityBlock?.dayPlans.forEach(day => {
+      if (day.dayNum > maxDay) maxDay = day.dayNum;
+    });
+  });
+  return maxDay;
+}
+
+function getCities(blocks: ItineraryBlock[]): string[] {
+  return blocks
+    .filter(b => b.cityBlock)
+    .map(b => CITY_NAMES[b.cityBlock!.cityId] || `City ${b.cityBlock!.cityId}`);
 }
 
 export default function NinerPlayground() {
-  const [itineraryJson, setItineraryJson] = useState("");
-  const [parsedItinerary, setParsedItinerary] = useState<ItineraryData | null>(null);
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [generatedItems, setGeneratedItems] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Modal state
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [customItems, setCustomItems] = useState<string[]>([]);
-  const [newItemText, setNewItemText] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("Dubai");
-  const [templateItems, setTemplateItems] = useState([
-    "Check Passports, Custom Cards etc",
-    "Verify passenger count (adults, children, infants)",
-    "Check for Amenities - Breakfast/Wifi/Elevator/Air conditioning",
-    "Twin beds should not be given for couples. Check and place email request for Double beds",
-    "City tax/Caution deposit communicated to Customer"
-  ]);
+  const [itinerary, setItinerary] = useState<ItineraryData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Auto-load iti.json on mount
   useEffect(() => {
-    const loadItinerary = async () => {
-      try {
-        const response = await fetch('/iti.json');
-        if (!response.ok) {
-          console.error('Failed to fetch iti.json:', response.status);
-          setError('Failed to load itinerary file');
-          return;
-        }
-        
-        let text = await response.text();
-        console.log('Loaded iti.json, length:', text.length);
-        
-        // Clean MongoDB export format - more aggressive
-        text = text
-          .replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, '') // Remove comments
-          .replace(/ObjectId\s*\(\s*"([^"]+)"\s*\)/g, '"$1"') // ObjectId("...") -> "..."
-          .replace(/NumberLong\s*\(\s*(-?\d+)\s*\)/g, '$1') // NumberLong(123) -> 123
-          .replace(/NumberLong\s*\(\s*"(-?\d+)"\s*\)/g, '$1') // NumberLong("123") -> 123
-          .replace(/ISODate\s*\(\s*"([^"]+)"\s*\)/g, '"$1"') // ISODate("...") -> "..."
-          .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
-          .trim();
-        
-        // Parse and prettify
-        const parsed = JSON.parse(text);
-        console.log('Parsed itinerary:', parsed);
-        console.log('Has itineraryBlocks:', !!parsed.itineraryBlocks);
-        
-        const prettified = JSON.stringify(parsed, null, 2);
-        
-        setItineraryJson(prettified);
-        setParsedItinerary(parsed);
-      } catch (err) {
-        console.error('Failed to load iti.json:', err);
-        setError('Failed to parse itinerary: ' + (err instanceof Error ? err.message : 'Unknown error'));
-      }
-    };
-    
-    loadItinerary();
+    fetch("/itilong.json")
+      .then(res => res.text())
+      .then(text => {
+        const parsed = parseItineraryJson(text);
+        setItinerary(parsed);
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        console.error("Fetch error:", e);
+        setIsLoading(false);
+      });
   }, []);
 
-  const regions = ["Dubai", "Europe", "Asia", "Americas", "Africa", "Oceania"];
-
-  const addCustomItem = () => {
-    if (newItemText.trim()) {
-      setCustomItems([...customItems, newItemText.trim()]);
-      setNewItemText("");
-    }
+  const toggleItem = (id: string) => {
+    setCheckedItems(prev => 
+      prev.includes(id) 
+        ? prev.filter(i => i !== id)
+        : [...prev, id]
+    );
   };
 
-  const removeCustomItem = (index: number) => {
-    setCustomItems(customItems.filter((_, i) => i !== index));
-  };
-
-  const removeTemplateItem = (index: number) => {
-    setTemplateItems(templateItems.filter((_, i) => i !== index));
-  };
-
-  const addTemplateItem = () => {
-    const newItem = prompt("Enter new template item:");
-    if (newItem && newItem.trim()) {
-      setTemplateItems([...templateItems, newItem.trim()]);
-    }
-  };
-
-  const existingNinerItems = templateItems;
-
-  // Activity ID to name mapping
-  const activityNames: Record<number, string> = {
-    520394: "Dubai Marina Dhow Cruise with Dinner",
-    551195: "Dubai City Tour with Burj Khalifa",
-    520508: "Desert Safari with BBQ Dinner",
-  };
-
-  const getMealType = (code?: string) => {
-    const meals: Record<string, string> = {
-      'BB': 'Bed & Breakfast',
-      'HB': 'Half Board',
-      'FB': 'Full Board',
-      'AI': 'All Inclusive',
-      'RO': 'Room Only',
-    };
-    return code ? meals[code] || code : 'Not specified';
-  };
-
-  const handleGenerateNiner = async () => {
-    if (!itineraryJson.trim()) {
-      setError("Please paste an itinerary JSON first");
-      return;
-    }
-
+  const handleGenerate = async () => {
     setIsGenerating(true);
-    setError(null);
-
+    
     try {
-      // Clean and validate JSON
-      let cleanJson = itineraryJson
-        .replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, '')
-        .replace(/ObjectId\(("[^"]+")\)/g, '$1')
-        .replace(/NumberLong\((\d+)\)/g, '$1')
-        .trim();
-      
-      JSON.parse(cleanJson);
-
       const response = await fetch("/api/generate-niner", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itinerary: cleanJson }),
+        body: JSON.stringify({ 
+          itinerary: JSON.stringify({
+            itineraryData: itinerary,
+            existingItems: TEMPLATE_ITEMS.map(i => i.text)
+          })
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to generate niner items");
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedItems(data.items || []);
       }
-
-      const data = await response.json();
-      setGeneratedItems(data.items);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid JSON or generation failed");
+    } catch (error) {
+      console.error("Failed to generate:", error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setItineraryJson(content);
-        try {
-          setParsedItinerary(JSON.parse(content));
-        } catch {
-          // Invalid JSON
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
+  const completedCount = checkedItems.length;
+  const config = itinerary?.costingKeyObject?.costingConfiguration;
+  const blocks = itinerary?.itineraryBlocks || [];
+  const totalDays = getTotalDays(blocks);
+  const cities = getCities(blocks);
+  const images = itinerary?.resortImages?.length ? itinerary.resortImages : GALLERY_IMAGES;
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
-      <AppHeader pageTitle="Niner Playground" />
+    <div className="flex h-screen flex-col bg-white">
+      {/* Simple Header */}
+      <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div>
+          <h1 className="text-lg font-semibold text-slate-900">Niner Checklist</h1>
+          <p className="text-xs text-slate-500">Pre-call preparation & AI-generated items</p>
+        </div>
+        <span className="text-xs text-slate-500 border border-slate-200 rounded-full px-2.5 py-0.5">
+          {completedCount}/{TEMPLATE_ITEMS.length} Ready
+        </span>
+      </div>
 
+      {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left: Itinerary Preview */}
-        <div className="flex w-1/2 flex-col border-r border-slate-200 bg-white">
-          <div className="border-b border-slate-200 px-6 py-4">
-            <h2 className="text-base font-semibold text-slate-900">
-              {parsedItinerary?.name || "Dubai Trip Itinerary"}
-            </h2>
-            <p className="text-xs text-slate-500">
-              {parsedItinerary?.userSearchDetail?.minDays} days trip to {parsedItinerary?.cityHotelStay?.[0]?.cityName || "Dubai"}
-            </p>
+        {/* Left Panel - Itinerary */}
+        <div className="flex w-1/2 flex-col border-r border-slate-200">
+          <div className="border-b border-slate-100 px-5 py-3">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-slate-500" />
+              <h2 className="text-sm font-medium text-slate-700">Itinerary Overview</h2>
+            </div>
           </div>
-
-          <ScrollArea className="flex-1 px-6 py-4">
-            {error ? (
-              <div className="flex h-full items-center justify-center">
-                <div className="max-w-md text-center">
-                  <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
-                    <p className="text-sm font-semibold text-red-900">Failed to Load</p>
-                    <p className="mt-2 text-xs text-red-700">{error}</p>
+          
+          <div className="flex-1 overflow-y-auto">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+              </div>
+            ) : itinerary ? (
+              <div className="p-5 space-y-5">
+                {/* Gallery */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <ImageIcon className="h-4 w-4 text-slate-400" />
+                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Gallery</p>
                   </div>
-                  <button
-                    onClick={() => window.location.reload()}
-                    className="text-sm text-slate-600 hover:text-slate-900"
-                  >
-                    Refresh page
-                  </button>
+                  <div className="grid grid-cols-4 gap-2">
+                    {images.slice(0, 4).map((img, i) => (
+                      <div key={i} className="aspect-square rounded-lg overflow-hidden bg-slate-100">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quick Info Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <InfoCard icon={<Plane className="h-4 w-4" />} label="From" value={config?.departureAirport || "N/A"} />
+                  <InfoCard icon={<Calendar className="h-4 w-4" />} label="Start Date" value={config?.departureDate || "N/A"} />
+                  <InfoCard icon={<Clock className="h-4 w-4" />} label="Duration" value={`${totalDays} Days`} />
+                  <InfoCard icon={<Users className="h-4 w-4" />} label="Trip Type" value={config?.tripType || "N/A"} />
+                </div>
+
+                {/* Cities Route */}
+                <div>
+                  <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mb-2">Route</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {cities.map((city, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5">
+                          <MapPin className="h-3 w-3 text-slate-400" />
+                          <span className="text-xs font-medium text-white">{city}</span>
+                        </div>
+                        {i < cities.length - 1 && <Car className="h-3 w-3 text-slate-300" />}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Day-wise Plan by City */}
+                <div>
+                  <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide mb-2">Day-wise Plan</p>
+                  <div className="space-y-4">
+                    {blocks.map((block, blockIdx) => {
+                      if (!block.cityBlock) return null;
+                      const cityName = CITY_NAMES[block.cityBlock.cityId] || `City ${block.cityBlock.cityId}`;
+                      return (
+                        <div key={blockIdx}>
+                          {/* City Header */}
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="h-3 w-3 text-slate-500" />
+                            <span className="text-xs font-medium text-slate-700">{cityName}</span>
+                            <span className="text-[10px] text-slate-400">({block.cityBlock.dayPlans.length} days)</span>
+                          </div>
+                          
+                          {/* Days */}
+                          <div className="space-y-1.5 ml-5">
+                            {block.cityBlock.dayPlans.map((day) => (
+                              <div key={day.dayNum} className="rounded-lg border border-slate-200 bg-white p-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-[10px] font-semibold text-slate-600">
+                                    D{day.dayNum}
+                                  </span>
+                                  {day.stay && <span className="text-[10px] text-slate-400 ml-auto">🏨 Stay</span>}
+                                </div>
+                                <div className="space-y-1 pl-8">
+                                  {day.slotPlans.map((slot, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 text-xs">
+                                      <span className="text-slate-400">{getSlotIcon(slot.slotName)}</span>
+                                      <span className={`flex-1 ${slot.actionType === "LEISURE" ? "text-slate-400 italic" : "text-slate-700"}`}>
+                                        {getActionLabel(slot.actionType, slot.activitySlotActionDetail)}
+                                      </span>
+                                      {slot.activitySlotActionDetail?.startTime && (
+                                        <span className="text-[10px] text-slate-400">{slot.activitySlotActionDetail.startTime}</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            ) : parsedItinerary && parsedItinerary.itineraryBlocks && parsedItinerary.itineraryBlocks.length > 0 ? (
-              <div className="space-y-6 pr-3">
-                {/* Trip Overview */}
-                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h3 className="text-sm font-semibold text-slate-900">Trip Overview</h3>
-                      <p className="mt-1 text-xs text-slate-600">
-                        {parsedItinerary.userSearchDetail?.minDays || parsedItinerary.userSearchDetail?.maxDays} days in{' '}
-                        {parsedItinerary.userSearchDetail?.region || 'Dubai'}
-                      </p>
-                      {parsedItinerary.cityHotelStay && parsedItinerary.cityHotelStay.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {parsedItinerary.cityHotelStay.map((hotel, idx) => (
-                            <Badge key={idx} variant="secondary" className="text-xs">
-                              {hotel.cityName}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+            ) : (
+              <div className="flex items-center justify-center h-full text-sm text-slate-400">No itinerary data found</div>
+            )}
+          </div>
+        </div>
 
-                {/* Hotel Details */}
-                {parsedItinerary.cityHotelStay && parsedItinerary.cityHotelStay.length > 0 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Hotel className="h-4 w-4 text-slate-600" />
-                      <h3 className="text-sm font-semibold text-slate-900">Accommodation</h3>
+        {/* Right Panel - Checklist */}
+        <div className="flex w-1/2 flex-col bg-slate-50">
+          <div className="border-b border-slate-200 bg-white px-5 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-slate-500" />
+                <h2 className="text-sm font-medium text-slate-700">Standard Checklist</h2>
+              </div>
+              <span className="text-xs text-slate-400">{TEMPLATE_ITEMS.length} items</span>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-5 space-y-4">
+              {/* Template Items */}
+              <div className="space-y-1.5">
+                {TEMPLATE_ITEMS.map((item, index) => (
+                  <button
+                    key={item.id}
+                    onClick={() => toggleItem(item.id)}
+                    className={`w-full text-left rounded-lg border p-3 transition-all ${
+                      checkedItems.includes(item.id)
+                        ? "border-slate-300 bg-slate-100"
+                        : "border-slate-200 bg-white hover:border-slate-300"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {checkedItems.includes(item.id) ? (
+                          <CheckCircle2 className="h-4 w-4 text-slate-600" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-slate-300" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-[10px] font-medium text-slate-400">{index + 1}</span>
+                        </div>
+                        <p className={`text-xs leading-relaxed ${
+                          checkedItems.includes(item.id) ? "text-slate-500" : "text-slate-700"
+                        }`}>
+                          {item.text}
+                        </p>
+                      </div>
                     </div>
-                    {parsedItinerary.cityHotelStay.map((hotel, idx) => (
-                      <div key={idx} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="text-sm font-semibold text-slate-900">{hotel.hotelName}</h4>
-                            <p className="mt-1 text-xs text-slate-600">{hotel.cityName}</p>
-                            <div className="mt-2 flex items-center gap-3">
-                              <Badge variant="outline" className="text-xs">
-                                {hotel.nights} nights
-                              </Badge>
-                              <div className="flex items-center gap-1 text-xs text-slate-600">
-                                <Utensils className="h-3 w-3" />
-                                {getMealType(hotel.mealTypeEnum)}
-                              </div>
-                            </div>
-                          </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Generated Items */}
+              {generatedItems.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="h-4 w-4 text-slate-500" />
+                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">AI Generated</p>
+                    <span className="text-[10px] border border-slate-200 rounded-full px-2 py-0.5">{generatedItems.length}</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {generatedItems.map((item, index) => (
+                      <div
+                        key={index}
+                        className="rounded-lg border border-slate-200 bg-white p-3"
+                      >
+                        <div className="flex items-start gap-3">
+                          <Sparkles className="h-4 w-4 text-slate-400 flex-shrink-0 mt-0.5" />
+                          <p className="text-xs leading-relaxed text-slate-700">{item}</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                )}
-
-                {/* Day by Day Itinerary */}
-                {parsedItinerary.itineraryBlocks.map((block, blockIndex) => {
-                  if (block.blockType === "CITY" && block.cityBlock) {
-                    const cityBlock = block.cityBlock;
-                    const getCityName = (cityId: number) => {
-                      const cities: Record<number, string> = { 20: "Dubai", 7: "Abu Dhabi", 1: "Bangkok" };
-                      return cities[cityId] || `City ${cityId}`;
-                    };
-
-                    return (
-                      <div key={blockIndex} className="space-y-3">
-                        <div className="flex items-center gap-2 pb-2">
-                          <MapPin className="h-5 w-5 text-blue-600" />
-                          <h3 className="text-base font-semibold text-slate-900">
-                            {getCityName(cityBlock.cityId)}
-                          </h3>
-                        </div>
-
-                        <div className="space-y-3">
-                          {cityBlock.dayPlans?.map((day, dayIndex) => (
-                            <div key={dayIndex} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                              <div className="mb-3 flex items-center gap-2">
-                                <Calendar className="h-4 w-4 text-slate-600" />
-                                <span className="text-sm font-semibold text-slate-900">Day {day.dayNum}</span>
-                              </div>
-
-                              <div className="space-y-2.5">
-                                {day.slotPlans?.map((slot, slotIndex) => {
-                                  const getActionIcon = (type: string) => {
-                                    if (type === "INTERNATIONAL_ARRIVE" || type === "INTERNATIONAL_DEPART") return <Plane className="h-4 w-4 text-orange-600" />;
-                                    if (type === "ACTIVITY") return <Sparkles className="h-4 w-4 text-purple-600" />;
-                                    if (type === "LEISURE") return <Hotel className="h-4 w-4 text-green-600" />;
-                                    return null;
-                                  };
-
-                                  const getActionText = (slot: any) => {
-                                    if (slot.actionType === "INTERNATIONAL_ARRIVE") {
-                                      return `Arrival at ${slot.arrivalSlotActionDetail?.arrivalAirportCode || "Airport"} - ${slot.arrivalSlotActionDetail?.meetingPointTransfer?.transferType || "Transfer"}`;
-                                    }
-                                    if (slot.actionType === "ACTIVITY") {
-                                      const activityId = slot.activitySlotActionDetail?.activityId;
-                                      const activityName = activityId ? (activityNames[activityId] || `Activity #${activityId}`) : "Activity";
-                                      const transfer = slot.activitySlotActionDetail?.transferIncluded ? " (Transfer included)" : " (No transfer)";
-                                      return activityName + transfer;
-                                    }
-                                    if (slot.actionType === "LEISURE") {
-                                      return "Free time to explore on your own";
-                                    }
-                                    return slot.actionType;
-                                  };
-
-                                  return (
-                                    <div key={slotIndex} className="flex items-start gap-3 rounded-md border border-slate-200 bg-white p-3">
-                                      <div className="mt-0.5">{getActionIcon(slot.actionType)}</div>
-                                      <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                          <Badge variant="outline" className="text-xs font-medium">
-                                            {slot.slotName}
-                                          </Badge>
-                                          {slot.activitySlotActionDetail?.startTime && (
-                                            <span className="flex items-center gap-1 text-xs text-slate-500">
-                                              <Clock className="h-3 w-3" />
-                                              {slot.activitySlotActionDetail.startTime}
-                                            </span>
-                                          )}
-                                        </div>
-                                        <p className="mt-1.5 text-xs leading-relaxed text-slate-700">{getActionText(slot)}</p>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-
-                {/* Trip Images */}
-                {parsedItinerary.resortImages && parsedItinerary.resortImages.length > 0 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <ImageIcon className="h-4 w-4 text-slate-600" />
-                      <h3 className="text-sm font-semibold text-slate-900">Trip Gallery</h3>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {parsedItinerary.resortImages.slice(0, 4).map((img, idx) => (
-                        <div key={idx} className="relative aspect-video overflow-hidden rounded-lg border border-slate-200">
-                          <img 
-                            src={img} 
-                            alt={`Trip image ${idx + 1}`}
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f1f5f9" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" font-family="sans-serif" font-size="14" fill="%2394a3b8" text-anchor="middle" dominant-baseline="middle"%3EImage unavailable%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <div className="text-center">
-                  <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-400" />
-                  <p className="mt-3 text-sm text-slate-500">Loading itinerary...</p>
-                  {parsedItinerary && !parsedItinerary.itineraryBlocks && (
-                    <p className="mt-2 text-xs text-red-500">No itinerary blocks found</p>
-                  )}
                 </div>
-              </div>
-            )}
-          </ScrollArea>
+              )}
+            </div>
+          </div>
 
-          <div className="border-t border-slate-200 p-4">
-            {error && (
-              <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
-                {error}
-              </div>
-            )}
-
+          {/* Footer with Generate Button */}
+          <div className="border-t border-slate-200 bg-white p-4 space-y-2">
             <button
-              onClick={handleGenerateNiner}
-              disabled={isGenerating || !itineraryJson.trim()}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleGenerate}
+              disabled={isGenerating || !itinerary}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 disabled:opacity-50"
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Analyzing Itinerary...
+                  Generating...
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  Generate Niner Items
+                  Generate from Itinerary
                 </>
               )}
             </button>
+            <button
+              onClick={() => setCheckedItems(TEMPLATE_ITEMS.map(i => i.id))}
+              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            >
+              Mark All Ready
+            </button>
           </div>
-        </div>
-
-        {/* Right: Results Section */}
-        <div className="flex w-1/2 flex-col bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-6 py-4">
-            <h2 className="text-base font-semibold text-slate-900">Analysis Results</h2>
-            <p className="text-xs text-slate-500">
-              Critical points to communicate to customers
-            </p>
-          </div>
-
-          <ScrollArea className="flex-1 px-6 py-4">
-            <div className="space-y-4 pr-3">
-              {/* Existing Items Reference */}
-              <div>
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <FileJson className="h-4 w-4 text-slate-600" />
-                    <h3 className="text-sm font-semibold text-slate-900">Standard Template</h3>
-                    <Badge variant="secondary" className="text-xs">{existingNinerItems.length + customItems.length} items</Badge>
-                  </div>
-                  <button
-                    onClick={() => setIsConfigOpen(true)}
-                    className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors"
-                    title="Configure niner items"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </button>
-                </div>
-                <div className="space-y-1.5">
-                  {existingNinerItems.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs"
-                    >
-                      <span className="font-medium text-slate-400">{index + 1}.</span>
-                      <span className="text-slate-700">{item}</span>
-                    </div>
-                  ))}
-                  {/* Custom Items */}
-                  {customItems.map((item, index) => (
-                    <div
-                      key={`custom-${index}`}
-                      className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs"
-                    >
-                      <span className="font-medium text-blue-600">{existingNinerItems.length + index + 1}.</span>
-                      <span className="flex-1 text-slate-700">{item}</span>
-                      <Badge variant="outline" className="text-xs border-blue-300 text-blue-700">Custom</Badge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Generated Items */}
-              <div>
-                <div className="mb-3 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-purple-600" />
-                  <h3 className="text-sm font-semibold text-slate-900">AI-Generated Items</h3>
-                  {generatedItems.length > 0 && (
-                    <Badge variant="secondary" className="bg-purple-50 text-purple-700 text-xs">
-                      {generatedItems.length} items
-                    </Badge>
-                  )}
-                </div>
-                {generatedItems.length === 0 ? (
-                  <div className="flex items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-12">
-                    <p className="text-sm text-slate-400">
-                      Click "Generate Niner Items" to analyze
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {generatedItems.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-2 rounded-md border border-purple-200 bg-purple-50 px-3 py-2.5 text-sm"
-                      >
-                        <span className="font-semibold text-purple-600">{index + 1}.</span>
-                        <span className="text-slate-700">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </ScrollArea>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Configuration Modal */}
-      <Dialog open={isConfigOpen} onOpenChange={setIsConfigOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Configure Niner Checklist</DialogTitle>
-            <DialogDescription>
-              Customize your niner items, select region, and manage templates
-            </DialogDescription>
-          </DialogHeader>
-
-          <Tabs defaultValue="custom" className="flex-1 overflow-hidden flex flex-col">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="custom">Custom Items</TabsTrigger>
-              <TabsTrigger value="region">Region</TabsTrigger>
-              <TabsTrigger value="template">Edit Template</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="custom" className="flex-1 overflow-auto mt-4">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-900">Add Custom Niner Item</label>
-                  <div className="mt-2 flex gap-2">
-                    <input
-                      type="text"
-                      value={newItemText}
-                      onChange={(e) => setNewItemText(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && addCustomItem()}
-                      placeholder="e.g., Check travel insurance coverage"
-                      className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={addCustomItem}
-                      className="flex items-center gap-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-slate-900">
-                    Your Custom Items ({customItems.length})
-                  </h4>
-                  {customItems.length === 0 ? (
-                    <p className="text-xs text-slate-500 py-8 text-center border border-dashed border-slate-300 rounded-md">
-                      No custom items yet. Add your first one above!
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {customItems.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3"
-                        >
-                          <span className="flex-1 text-sm text-slate-700">{item}</span>
-                          <button
-                            onClick={() => removeCustomItem(index)}
-                            className="text-slate-400 hover:text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="region" className="flex-1 overflow-auto mt-4">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-900">Select Target Region</label>
-                  <p className="mt-1 text-xs text-slate-500">
-                    Choose the primary region for this itinerary to customize relevant checks
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {regions.map((region) => (
-                    <button
-                      key={region}
-                      onClick={() => setSelectedRegion(region)}
-                      className={`rounded-lg border-2 p-4 text-left transition-all ${
-                        selectedRegion === region
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <MapPin className={`h-4 w-4 ${selectedRegion === region ? 'text-blue-600' : 'text-slate-400'}`} />
-                        <span className={`font-medium ${selectedRegion === region ? 'text-blue-900' : 'text-slate-900'}`}>
-                          {region}
-                        </span>
-                      </div>
-                      {selectedRegion === region && (
-                        <Badge className="mt-2 bg-blue-600">Selected</Badge>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="template" className="flex-1 overflow-auto mt-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-medium text-slate-900">Template Items</h4>
-                    <p className="text-xs text-slate-500 mt-1">Edit or remove default checklist items</p>
-                  </div>
-                  <button
-                    onClick={addTemplateItem}
-                    className="flex items-center gap-1 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add Item
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  {templateItems.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3"
-                    >
-                      <span className="text-xs font-medium text-slate-400 mt-0.5">{index + 1}.</span>
-                      <span className="flex-1 text-sm text-slate-700">{item}</span>
-                      <button
-                        onClick={() => removeTemplateItem(index)}
-                        className="text-slate-400 hover:text-red-600"
-                        title="Remove item"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <DialogFooter className="mt-4">
-            <button
-              onClick={() => setIsConfigOpen(false)}
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
-            >
-              Done
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+function InfoCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-slate-400">{icon}</span>
+        <span className="text-[10px] text-slate-400 uppercase tracking-wide">{label}</span>
+      </div>
+      <p className="text-xs font-medium text-slate-700">{value}</p>
     </div>
   );
 }

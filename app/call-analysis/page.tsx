@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { CallAnalysisView } from "@/components/call-analysis-view";
+import { CallSummaryView } from "@/components/call-summary-view";
 import { mockCallAnalysis } from "@/lib/mock-analysis";
 import type { CallAnalysis } from "@/lib/types";
 import { Loader2 } from "lucide-react";
@@ -86,31 +86,25 @@ function CallAnalysisContent() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="flex h-screen items-center justify-center bg-white">
         <div className="text-center">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-          <p className="mt-4 text-lg font-medium">Analyzing call transcript...</p>
-          <p className="text-sm text-muted-foreground">Extracting insights and compliance data</p>
+          <Loader2 className="mx-auto h-10 w-10 animate-spin text-slate-400" />
+          <p className="mt-4 text-sm font-medium text-slate-600">Analyzing call transcript...</p>
+          <p className="text-xs text-slate-400">Extracting insights and compliance data</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto px-6 py-8">
-        {analysis && <CallAnalysisView analysis={analysis} />}
-      </div>
-    </div>
-  );
+  return analysis ? <CallSummaryView analysis={analysis} /> : null;
 }
 
 export default function CallAnalysisPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-slate-600" />
+        <div className="flex h-screen items-center justify-center bg-white">
+          <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
         </div>
       }
     >

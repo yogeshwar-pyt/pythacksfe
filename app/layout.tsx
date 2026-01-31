@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex min-h-screen">
           <AppSidebar />
-          <main className="ml-20 flex-1">
+          <main className="ml-16 flex-1">
             {children}
           </main>
         </div>

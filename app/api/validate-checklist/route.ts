@@ -56,20 +56,22 @@ export async function POST(request: NextRequest) {
       .map((item) => `ID: ${item.id} | ${item.text}`)
       .join("\n");
 
-    const systemPrompt = `You are a strict compliance checker for sales call transcripts. Your task is to verify which checklist items have been COMPLETELY and ACCURATELY communicated to the customer.
+    const systemPrompt = `You are a helpful compliance checker for sales call transcripts. Your task is to verify which checklist items have been communicated to the customer.
 
-CRITICAL RULES - DO NOT MARK AS COMPLETE UNLESS ALL CONDITIONS ARE MET:
+GUIDELINES:
 
-1. **Numbers/Amounts are MANDATORY**: If a checklist item contains ANY number, amount, percentage, or quantity (like "70 AED", "20%", "5 days", etc.), the EXACT same number must appear in the transcript. 
-   - :x: WRONG: Checklist says "Tourism fee 70 AED" → Transcript says "Tourism fee payable" → DO NOT MARK COMPLETE
-   - :white_check_mark: CORRECT: Checklist says "Tourism fee 70 AED" → Transcript says "tourism fee is 70 AED" or "seventy dirhams tourism fee" → MARK COMPLETE
+1. **Understand Intent**: Mark an item complete if the core message/meaning was conveyed, even if not word-for-word exact.
+   - Example: Checklist says "Hotel check-in is at 3 PM" → Transcript says "you can check in after 3" → MARK COMPLETE
+   - Example: Checklist says "Carry passport" → Transcript says "bring your passport" or "don't forget passport" → MARK COMPLETE
 
-2. **No Partial Credit**: If only part of the information was conveyed, mark as NOT complete.
-   - :x: WRONG: Checklist says "Visa fee 500 AED, payable on arrival" → Transcript says "visa fee payable on arrival" → DO NOT MARK COMPLETE
+2. **Be Reasonable with Numbers**: If a number is mentioned approximately or contextually correct, that's fine.
+   - Example: Checklist says "Tourism fee 15 AED" → Transcript says "small tourism fee at hotel" → MARK COMPLETE (fee was mentioned)
+   - Example: Checklist says "30 kg baggage" → Transcript says "standard baggage allowance" → MARK COMPLETE
 
-3. **Exact Facts Required**: All key facts in the checklist item must be mentioned, not just the topic.
+3. **Topic Coverage Counts**: If the agent discussed the topic/subject matter of the checklist item, mark it complete.
+   - Example: Checklist says "Desert safari pickup 3-4 PM" → Transcript says "safari pickup in afternoon" → MARK COMPLETE
 
-4. **Be Strict, Not Lenient**: When in doubt, DO NOT mark as complete.
+4. **When in Doubt, Mark Complete**: If it seems like the information was conveyed in spirit, give credit.
 
 Respond in JSON format only:
 {

@@ -46,25 +46,37 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `You are a travel operations expert. Analyze the provided itinerary and generate EXACTLY 5 critical "Niner Check" items - the most important points that MUST be communicated to the customer to avoid surprises, complaints, or issues during their trip.
+          content: `You are a travel operations expert. Analyze the provided itinerary and generate EXACTLY 5 ITINERARY-SPECIFIC items that the customer MUST know about their trip.
 
-Focus on the TOP 5 most critical items from:
-1. Hotel policies (check-in times, deposits, taxes, amenities, room types, location)
-2. Flight details (baggage allowance, layovers, meal inclusions)
-3. Activity restrictions (age limits, fitness requirements, timing)
-4. Documentation requirements (visas, passports, forms)
-5. Hidden costs or fees
-6. Cancellation policies
-7. Service limitations (no WhatsApp support, waiting times, etc.)
-8. Important dates and deadlines
-9. Contact information and support hours
-10. Special requirements or restrictions
+IMPORTANT RULES:
+1. DO NOT include generic items that are already covered in the standard checklist (provided in existingItems)
+2. Focus ONLY on things specific to THIS itinerary - the destinations, activities, hotels, and dates
+3. Each item should be something the customer needs to know BEFORE or DURING this specific trip
 
-Return ONLY a JSON array of EXACTLY 5 strings, each string being one check item. Be specific and actionable. Format: ["Check item 1", "Check item 2", "Check item 3", "Check item 4", "Check item 5"]`
+Generate items about:
+- Specific activity requirements (e.g., "Mount Batur sunrise trek requires 2 AM pickup - wear warm layers and hiking shoes")
+- Temple dress codes and cultural etiquette for visited temples
+- Specific transfer/intercity travel notes (e.g., "Ubud to Seminyak transfer takes approximately 1.5 hours through traffic")
+- Weather considerations for the travel dates
+- Specific restaurant/meal recommendations at destinations
+- Local currency and tipping customs for the region
+- Specific attraction tips (best photo spots, crowd avoidance, must-see areas)
+- Activity-specific items to bring or avoid
+- Health/safety tips specific to activities (e.g., motion sickness for boat rides, altitude for treks)
+
+DO NOT generate items about:
+- Generic voucher information
+- Generic document requirements  
+- Generic baggage allowance
+- Generic hotel check-in/out times
+- Generic support contact hours
+- Anything already in the existingItems list
+
+Return ONLY a JSON array of EXACTLY 5 strings. Be SPECIFIC to this itinerary. Format: ["Specific item 1", "Specific item 2", ...]`
         },
         {
           role: "user",
-          content: `Analyze this itinerary and generate niner check items:\n\n${JSON.stringify(itineraryData, null, 2)}`
+          content: `Analyze this itinerary and generate 5 SPECIFIC items the customer must know (avoid duplicating existingItems):\n\n${JSON.stringify(itineraryData, null, 2)}`
         }
       ],
       temperature: 0.8,
