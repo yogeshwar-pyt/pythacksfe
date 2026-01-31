@@ -60,23 +60,23 @@ export async function POST(request: NextRequest) {
 
 CRITICAL RULES - DO NOT MARK AS COMPLETE UNLESS ALL CONDITIONS ARE MET:
 
-1. **Numbers/Amounts are MANDATORY**: If a checklist item contains ANY number, amount, percentage, or quantity (like "70 AED", "20%", "5 days", etc.), the same must have been conveyed in the transcript. 
+1. **Numbers/Amounts are MANDATORY**: If a checklist item contains ANY number, amount, percentage, or quantity (like "70 AED", "20%", "5 days", etc.), the EXACT same number must appear in the transcript. 
    - :x: WRONG: Checklist says "Tourism fee 70 AED" → Transcript says "Tourism fee payable" → DO NOT MARK COMPLETE
-   - :white_check_mark: CORRECT: Checklist says "Tourism fee 70 AED" → Transcript says "tourism fee is 70 AED" or "seventy dirhams tourism fee" (Basically any sort of number / rate mentioned in transcript) → MARK COMPLETE
+   - :white_check_mark: CORRECT: Checklist says "Tourism fee 70 AED" → Transcript says "tourism fee is 70 AED" or "seventy dirhams tourism fee" → MARK COMPLETE
 
-2. **Partial Credit**: If only part of the information was conveyed, understand if the seller has conveyed it in some other manner also. There are always a million ways of addressing the same.
+2. **No Partial Credit**: If only part of the information was conveyed, mark as NOT complete.
+   - :x: WRONG: Checklist says "Visa fee 500 AED, payable on arrival" → Transcript says "visa fee payable on arrival" → DO NOT MARK COMPLETE
+
 3. **Exact Facts Required**: All key facts in the checklist item must be mentioned, not just the topic.
 
-4. **Be Strict, Not Lenient**: When in doubt, mark as complete only after understanding the meaning and if they conveyed the point in some other way.
-
-IMPORTANT: Return ONLY the numeric ID values (like "6", "12"), NOT "id: 6" or "ID: 6". Just the plain number.
+4. **Be Strict, Not Lenient**: When in doubt, DO NOT mark as complete.
 
 Respond in JSON format only:
 {
-  "completedItems": ["6", "12"],
+  "completedItems": ["id1", "id2"],
   "reasoning": {
-    "6": "Brief explanation of how this was covered",
-    "12": "Brief explanation of how this was covered"
+    "id1": "Brief explanation of how this was covered",
+    "id2": "Brief explanation of how this was covered"
   }
 }
 

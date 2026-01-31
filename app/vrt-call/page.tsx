@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
-import { CheckCircle2, Circle, Phone, ListChecks, FileText, Loader2 } from "lucide-react";
+import { CheckCircle2, Circle, Phone, ListChecks, FileText, Loader2, UserCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CallAnimation } from "@/components/call-animation";
 import { ShimmerLoader } from "@/components/shimmer-loader";
+import { RapportPanel } from "@/components/rapport-panel";
 
 interface ChecklistItem {
   id: string;
@@ -106,6 +107,7 @@ function VrtCallContent() {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [activeTab, setActiveTab] = useState<"checklist" | "voucher">("checklist");
+  const [isRapportOpen, setIsRapportOpen] = useState(false);
 
   const handleStartCall = () => {
     setIsCallActive(true);
@@ -135,17 +137,28 @@ function VrtCallContent() {
       <AppHeader
         pageTitle="VRT Call"
         actionButton={
-          !isCallActive ? (
+          <div className="flex items-center gap-2">
             <button
-              onClick={handleStartCall}
-              className="flex items-center gap-2 rounded-md bg-slate-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+              onClick={() => setIsRapportOpen(true)}
+              className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
             >
-              <Phone className="h-4 w-4" />
-              Start Call
+              <UserCircle className="h-4 w-4" />
+              Rapport
             </button>
-          ) : null
+            {!isCallActive && (
+              <button
+                onClick={handleStartCall}
+                className="flex items-center gap-2 rounded-md bg-slate-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+              >
+                <Phone className="h-4 w-4" />
+                Start Call
+              </button>
+            )}
+          </div>
         }
       />
+
+      <RapportPanel isOpen={isRapportOpen} onClose={() => setIsRapportOpen(false)} />
 
       <div className="flex flex-1 overflow-hidden bg-slate-50">
         {/* Left: Checklist (40%) */}
