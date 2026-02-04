@@ -31,6 +31,7 @@ function CallInProgressContent() {
           id: `point-${index}`,
           text: point,
           completed: false,
+          section: "Call Guidance",
         })
       );
       setChecklistItems(items);
