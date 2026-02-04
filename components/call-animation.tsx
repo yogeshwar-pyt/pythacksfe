@@ -16,6 +16,7 @@ interface CallAnimationProps {
   callId?: string;
   checklistItems?: ChecklistItem[];
   onChecklistUpdate?: (items: ChecklistItem[]) => void;
+  onTranscriptUpdate?: (transcripts: any[]) => void;
 }
 
 export function CallAnimation({
@@ -23,6 +24,7 @@ export function CallAnimation({
   callId = "",
   checklistItems = [],
   onChecklistUpdate,
+  onTranscriptUpdate,
 }: CallAnimationProps) {
   const [callDuration, setCallDuration] = useState(0);
   const [status, setStatus] = useState<"connecting" | "active" | "ending">("connecting");
@@ -39,6 +41,7 @@ export function CallAnimation({
     callId,
     checklistItems,
     onChecklistUpdate,
+    onTranscriptUpdate,
   });
 
   // Calculate speech speed from the latest transcript

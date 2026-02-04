@@ -73,7 +73,7 @@ EXAMPLES:
 ❌ DON'T MARK:
 - If the topic was never mentioned at all in the conversation
 
-BE GENEROUS. If the agent touched on the subject at all, mark it complete.
+Dont be overly generous but ensure that topic was spoken about in some way.
 
 Respond in JSON format only:
 {

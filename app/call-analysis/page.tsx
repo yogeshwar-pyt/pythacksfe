@@ -19,7 +19,43 @@ function CallAnalysisContent() {
     const processAnalysis = async () => {
       try {
         console.log('[Call Analysis] Starting analysis...');
-        console.log('[Call Analysis] Checklist param:', checklistDataParam?.substring(0, 100));
+        
+        // 1. Try to get transcript from local storage (Client-side only)
+        const transcriptJson = typeof window !== 'undefined' ? localStorage.getItem("lastCallTranscript") : null;
+        let apiAnalysisSuccess = false;
+
+        if (checklistDataParam && transcriptJson) {
+            try {
+                const checklistItems = JSON.parse(decodeURIComponent(checklistDataParam));
+                const transcript = JSON.parse(transcriptJson);
+
+                console.log('[Call Analysis] Calling AI Analysis API with transcript length:', transcript.length);
+                
+                const response = await fetch('/api/analyze-call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ checklist: checklistItems, transcript })
+                });
+
+                if (response.ok) {
+                    const analysisData = await response.json();
+                    console.log('[Call Analysis] API Analysis success');
+                    setAnalysis(analysisData);
+                    apiAnalysisSuccess = true;
+                } else {
+                    console.error('[Call Analysis] API failed:', await response.text());
+                }
+            } catch (err) {
+                console.error('[Call Analysis] API Analysis error:', err);
+            }
+        }
+
+        if (apiAnalysisSuccess) {
+            setIsLoading(false);
+            return;
+        }
+
+        console.log('[Call Analysis] Falling back to local calculation');
         
         // If we have checklist data from the call, use it
         if (checklistDataParam) {

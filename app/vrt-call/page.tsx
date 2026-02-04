@@ -82,6 +82,7 @@ function VrtCallContent() {
   const [isRapportOpen, setIsRapportOpen] = useState(false);
   const [leftPanelTab, setLeftPanelTab] = useState<"checkpoints" | "profile">("checkpoints");
   const [customerProfile, setCustomerProfile] = useState<any>(null);
+  const [transcript, setTranscript] = useState<any[]>([]);
 
   // Load profile on mount
   useEffect(() => {
@@ -102,6 +103,11 @@ function VrtCallContent() {
     // Pass checklist data to analysis page
     const checklistData = encodeURIComponent(JSON.stringify(checklist));
     
+    // Save transcript to local storage for analysis
+    if (transcript.length > 0) {
+      localStorage.setItem("lastCallTranscript", JSON.stringify(transcript));
+    }
+
     setTimeout(() => {
       router.push(`/call-analysis?checklist=${checklistData}`);
     }, 1500);
@@ -109,6 +115,10 @@ function VrtCallContent() {
 
   const handleChecklistUpdate = (updatedItems: ChecklistItem[]) => {
     setChecklist(updatedItems);
+  };
+
+  const handleTranscriptUpdate = (newTranscripts: any[]) => {
+    setTranscript(newTranscripts);
   };
 
   const completedCount = checklist.filter((item) => item.completed).length;
@@ -210,18 +220,18 @@ function VrtCallContent() {
                         {sectionItems.map((item) => (
                           <div
                             key={item.id}
-                            className={`flex items-start gap-3 rounded-lg border p-3 ml-3 transition-all duration-200 ${
+                            className={`flex items-start gap-3.5 rounded-lg border p-3.5 ml-3 transition-all duration-200 ${
                               item.completed
                                 ? "border-emerald-200 bg-emerald-50"
                                 : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
                             }`}
                           >
                             {item.completed ? (
-                              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-700 mt-0.5" />
+                              <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-emerald-700 mt-0.5" />
                             ) : (
-                              <Circle className="h-4 w-4 flex-shrink-0 text-slate-300 mt-0.5" />
+                              <Circle className="h-5 w-5 flex-shrink-0 text-slate-300 mt-0.5" />
                             )}
-                            <span className={`text-xs leading-relaxed font-semibold transition-colors ${
+                            <span className={`text-sm leading-relaxed font-medium transition-colors ${
                               item.completed 
                                 ? "text-emerald-900 line-through decoration-emerald-600/70 decoration-2" 
                                 : "text-slate-700"
@@ -412,6 +422,7 @@ function VrtCallContent() {
                   callId={callId}
                   checklistItems={checklist}
                   onChecklistUpdate={handleChecklistUpdate}
+                  onTranscriptUpdate={handleTranscriptUpdate}
                 />
               </div>
             </div>

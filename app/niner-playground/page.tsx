@@ -15,7 +15,10 @@ import {
   Sunset,
   Coffee,
   Car,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Plus,
+  Edit2,
+  X
 } from "lucide-react";
 
 // Standard template items from email template
@@ -177,8 +180,20 @@ export default function NinerPlayground() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [itinerary, setItinerary] = useState<ItineraryData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [customItems, setCustomItems] = useState<Array<{ id: string; text: string }>>([]);
+  const [editedTemplateItems, setEditedTemplateItems] = useState<Record<string, string>>({});
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newItemText, setNewItemText] = useState("");
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [isEditingTemplate, setIsEditingTemplate] = useState(false);
 
   useEffect(() => {
+    // Load saved custom items and edited templates
+    const savedCustom = localStorage.getItem("ninerCustomItems");
+    const savedEdited = localStorage.getItem("ninerEditedTemplates");
+    if (savedCustom) setCustomItems(JSON.parse(savedCustom));
+    if (savedEdited) setEditedTemplateItems(JSON.parse(savedEdited));
+
     fetch("/itilong.json")
       .then(res => res.text())
       .then(text => {
@@ -224,6 +239,61 @@ export default function NinerPlayground() {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleAddOrEditItem = () => {
+    if (!newItemText.trim()) return;
+    
+    if (editingItemId) {
+      if (isEditingTemplate) {
+        // Edit template item
+        const updated = { ...editedTemplateItems, [editingItemId]: newItemText };
+        setEditedTemplateItems(updated);
+        localStorage.setItem("ninerEditedTemplates", JSON.stringify(updated));
+      } else {
+        // Edit custom item
+        const updated = customItems.map(item => 
+          item.id === editingItemId ? { ...item, text: newItemText } : item
+        );
+        setCustomItems(updated);
+        localStorage.setItem("ninerCustomItems", JSON.stringify(updated));
+      }
+    } else {
+      // Add new custom item
+      const newItem = {
+        id: `custom-${Date.now()}`,
+        text: newItemText
+      };
+      const updated = [...customItems, newItem];
+      setCustomItems(updated);
+      localStorage.setItem("ninerCustomItems", JSON.stringify(updated));
+    }
+    
+    setNewItemText("");
+    setEditingItemId(null);
+    setIsEditingTemplate(false);
+    setIsAddDialogOpen(false);
+  };
+
+  const handleEditCustomItem = (item: { id: string; text: string }) => {
+    setNewItemText(item.text);
+    setEditingItemId(item.id);
+    setIsEditingTemplate(false);
+    setIsAddDialogOpen(true);
+  };
+
+  const handleEditTemplateItem = (id: string, text: string) => {
+    setNewItemText(editedTemplateItems[id] || text);
+    setEditingItemId(id);
+    setIsEditingTemplate(true);
+    setIsAddDialogOpen(true);
+  };
+
+  const handleDeleteItem = (id: string) => {
+    const updated = customItems.filter(item => item.id !== id);
+    setCustomItems(updated);
+    localStorage.setItem("ninerCustomItems", JSON.stringify(updated));
+    setCheckedItems(prev => prev.filter(itemId => itemId !== id));
   };
 
   const completedCount = checkedItems.length;
@@ -365,7 +435,13 @@ export default function NinerPlayground() {
                 <CheckCircle2 className="h-4 w-4 text-slate-500" />
                 <h2 className="text-sm font-medium text-slate-700">Standard Checklist</h2>
               </div>
-              <span className="text-xs text-slate-400">{TEMPLATE_ITEMS.length} items</span>
+              <button
+                onClick={() => setIsAddDialogOpen(true)}
+                className="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                <Plus className="h-3 w-3" />
+                Add Custom
+              </button>
             </div>
           </div>
 
@@ -373,38 +449,101 @@ export default function NinerPlayground() {
             <div className="p-5 space-y-4">
               {/* Template Items */}
               <div className="space-y-1.5">
-                {TEMPLATE_ITEMS.map((item, index) => (
-                  <button
-                    key={item.id}
-                    onClick={() => toggleItem(item.id)}
-                    className={`w-full text-left rounded-lg border p-3 transition-all ${
-                      checkedItems.includes(item.id)
-                        ? "border-slate-300 bg-slate-100"
-                        : "border-slate-200 bg-white hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 mt-0.5">
-                        {checkedItems.includes(item.id) ? (
-                          <CheckCircle2 className="h-4 w-4 text-slate-600" />
-                        ) : (
-                          <Circle className="h-4 w-4 text-slate-300" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[10px] font-medium text-slate-400">{index + 1}</span>
+                {TEMPLATE_ITEMS.map((item, index) => {
+                  const displayText = editedTemplateItems[item.id] || item.text;
+                  return (
+                    <div
+                      key={item.id}
+                      className={`rounded-lg border p-3 transition-all group ${
+                        checkedItems.includes(item.id)
+                          ? "border-slate-300 bg-slate-100"
+                          : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <button
+                          onClick={() => toggleItem(item.id)}
+                          className="flex-shrink-0 mt-0.5"
+                        >
+                          {checkedItems.includes(item.id) ? (
+                            <CheckCircle2 className="h-4 w-4 text-slate-600" />
+                          ) : (
+                            <Circle className="h-4 w-4 text-slate-300" />
+                          )}
+                        </button>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] font-medium text-slate-400">{index + 1}</span>
+                            {editedTemplateItems[item.id] && (
+                              <span className="text-[9px] text-blue-600 font-medium">EDITED</span>
+                            )}
+                          </div>
+                          <p className={`text-xs leading-relaxed ${
+                            checkedItems.includes(item.id) ? "text-slate-500" : "text-slate-700"
+                          }`}>
+                            {displayText}
+                          </p>
                         </div>
-                        <p className={`text-xs leading-relaxed ${
-                          checkedItems.includes(item.id) ? "text-slate-500" : "text-slate-700"
-                        }`}>
-                          {item.text}
-                        </p>
+                        <button
+                          onClick={() => handleEditTemplateItem(item.id, item.text)}
+                          className="p-1 hover:bg-slate-100 rounded opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                        >
+                          <Edit2 className="h-3 w-3 text-slate-400" />
+                        </button>
                       </div>
                     </div>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
+
+              {/* Custom Items */}
+              {customItems.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Edit2 className="h-4 w-4 text-slate-500" />
+                      <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">Custom Items</p>
+                      <span className="text-[10px] border border-slate-200 rounded-full px-2 py-0.5">{customItems.length}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    {customItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="rounded-lg border border-slate-200 bg-white p-3 group hover:border-slate-300"
+                      >
+                        <div className="flex items-start gap-3">
+                          <button
+                            onClick={() => toggleItem(item.id)}
+                            className="flex-shrink-0 mt-0.5"
+                          >
+                            {checkedItems.includes(item.id) ? (
+                              <CheckCircle2 className="h-4 w-4 text-slate-600" />
+                            ) : (
+                              <Circle className="h-4 w-4 text-slate-300" />
+                            )}
+                          </button>
+                          <p className="text-xs leading-relaxed text-slate-700 flex-1">{item.text}</p>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => handleEditCustomItem(item)}
+                              className="p-1 hover:bg-slate-100 rounded"
+                            >
+                              <Edit2 className="h-3 w-3 text-slate-400" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(item.id)}
+                              className="p-1 hover:bg-slate-100 rounded"
+                            >
+                              <X className="h-3 w-3 text-slate-400" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Generated Items */}
               {generatedItems.length > 0 && (
@@ -452,7 +591,7 @@ export default function NinerPlayground() {
               )}
             </button>
             <button
-              onClick={() => setCheckedItems(TEMPLATE_ITEMS.map(i => i.id))}
+              onClick={() => setCheckedItems([...TEMPLATE_ITEMS.map(i => i.id), ...customItems.map(i => i.id)])}
               className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
             >
               Mark All Ready
@@ -460,6 +599,49 @@ export default function NinerPlayground() {
           </div>
         </div>
       </div>
+
+      {/* Add/Edit Dialog */}
+      {isAddDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setIsAddDialogOpen(false)}>
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="border-b border-slate-200 px-5 py-4">
+              <h3 className="text-sm font-semibold text-slate-900">
+                {editingItemId ? (isEditingTemplate ? "Edit Template Item" : "Edit Custom Item") : "Add Custom Item"}
+              </h3>
+            </div>
+            <div className="p-5">
+              <textarea
+                value={newItemText}
+                onChange={(e) => setNewItemText(e.target.value)}
+                placeholder="Enter checklist item..."
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                rows={4}
+                autoFocus
+              />
+            </div>
+            <div className="border-t border-slate-200 px-5 py-4 flex items-center justify-end gap-2">
+              <button
+                onClick={() => {
+                  setIsAddDialogOpen(false);
+                  setNewItemText("");
+                  setEditingItemId(null);
+                  setIsEditingTemplate(false);
+                }}
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddOrEditItem}
+                disabled={!newItemText.trim()}
+                className="px-4 py-2 rounded-lg bg-slate-900 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+              >
+                {editingItemId ? "Save Changes" : "Add Item"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

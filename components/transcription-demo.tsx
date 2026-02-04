@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 // Hardcoded transcript from transcriptmain.txt
-const TRANSCRIPT_RAW = `[0000.880 --> 0005.828] Hello, good afternoon sir, Ravi this side calling from Picky Outrail.
+const TRANSCRIPT_RAW = `[0000.880 --> 0005.828] Hello, good afternoon sir, Is this Ravi this side calling from Picky Outrail.
 [0005.828 --> 0011.349] Actually sir, I have received an enquiry of yours regarding a Dubai vacation.
 [0011.349 --> 0012.855] Are you planning one?
 [0012.855 --> 0015.150] Yes sir, yes sir, I am planning.
